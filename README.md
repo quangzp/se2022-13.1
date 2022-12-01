@@ -1,26 +1,23 @@
-# Khái niệm cơ bản về blockchain
-## 1. Blockchain là gì?
- - Blockchain là một sổ cái kỹ thuật số của các giao dịch được duy trì bởi một mạng máy tính theo cách khó bị hack hoặc thay đổi. Công
-nghệ này cung cấp một cách an toàn để các cá nhân giao dịch tài sản kỹ thuật số trực tiếp với nhau mà không cần qua một bên trung
-gian thứ ba.
- - Hệ thống Blockchain chia thành 4 loại chính:
-    - Công khai (Public): Không cần cấp phép, bất kỳ ai cũng có thể tham gia và hoàn toàn phi tập trung. Các blockchain công khai
-cho phép tất cả các nút có quyền như nhau để truy cập vào blockchain, tạo các khối dữ liệu mới và xác thực các khối dữ liệu, ví
-dụ: Bitcoin, Ethereum.
-    - Tư nhân/Được quản lý (Private/Managed): Được kiểm soát bởi một tổ chức duy nhất. Trong một blockchain riêng tư, tổ chức
-quản lý xác định ai có thể là một nút. Người quản lý cũng không nhất thiết phải cấp cho mỗi nút quyền như nhau để thực hiện
-các chức năng. Các blockchain riêng tư chỉ phi tập trung một phần vì quyền truy cập công khai bị hạn chế, ví dụ: mạng trao đổi
-tiền ảo giữa doanh nghiệp với doanh nghiệp Hyperledger.
-    - Liên hợp (Consortium): Là các blockchain được cấp phép được quản lý bởi một nhóm các tổ chức, thay vì một thực thể như của
-blockchain riêng tư. Do đó, các blockchain liên hợp được hưởng sự phi tập hưởng nhiều hơn so với các blockchain riêng tư, dẫn
-đến mức độ bảo mật cao hơn, ví dụ: GSBN (Global Shipping Business Network) là blockchain liên hợp phi lợi nhuận nhằm mục
-đích số hóa ngành vận tải biển.
-    - Hỗn hợp (Hybrid): Được kiểm soát bởi một tổ chức duy nhất, nhưng với mức độ giám sát được thực hiện bởi blockchain công
-khai, được yêu cầu để thực hiện xác thực giao dịch nhất định, ví dụ: IBM Food Trust.
+# Tìm hiểu về blockchain và code một app kết nối với sàn giao dịch Binance, sử dụng Binance API để thiết kế 1 thuật toán tự động trading.
+## 1. Tổng quan về blockchain
 
-## 2. Các hoạt động cơ bản trong blockchain
-  - Xác thực các giao dịch
-  - Thu thập các giao dịch cho một khối
-  - Phát sóng các giao dịch hợp lệ
-  - Đồng thuận trong việc tạo ra khối tiếp theo
+### Khái niệm
+- Blockchain là công nghệ chuỗi – khối, cho phép truyền tải dữ liệu một cách an toàn dựa trên hệ thống mã hóa vô cùng phức tạp, tương tự như cuốn sổ cái kế toán của một công ty, nơi mà tiền được giám sát chặt chẽ và ghi nhận mọi giao dịch trên mạng ngang hàng. 
+- Mỗi khối (block) đều chứa thông tin về thời gian khởi tạo và được liên kết với khối trước đó, kèm theo đó là một mã thời gian và dữ liệu giao dịch
+
+### Công nghệ sử dụng
+- **Mật mã học**: để đảm bảo tính minh bạch, toàn vẹn và riêng tư thì công nghệ Blockchain đã sử dụng public key và hàm hash function.
+- **Mạng ngang hàng**: Mỗi một nút trong mạng được xem như một client và cũng là server để lưu trữ bản sao ứng dụng.
+- **Lý thuyết trò chơi**: Tất cả các nút tham gia vào hệ thống đều phải tuân thủ luật chơi đồng thuận (giao thức PoW, PoS,…) và được thúc đẩy bởi động lực kinh tế.
+
+### Phân loại
+- **Dựa trên các khả năng của blockchain** mà người ta phân biệt thành 3 loại chính được phát triển từ nền tảng của Bitcoin:
+    - Loại 1: Chỉ làm việc với tiền điện tử
+    - Loại 2: Hỗ trợ tiền điện tử và một tầng logic nghiệp vụ được hỗ trợ bởi thực thi mã, ví dụ: Ethereum.
+    - Loại 3: Không liên quan đến tiền tệ nhưng hỗ trợ thực hiện phần mềm cho logic nghiệp vụ, ví dụ: Hyperledger của Linux Foundation.
+- **Dựa trên mức truy cập** , chia blockchain thành 4 loại chính: 
+    - Công khai (Public)
+    - Tư nhân/Được quản lý (Private/Managed)
+    - Liên hợp (Consortium)
+    - Hỗn hợp (Hybrid)
 
