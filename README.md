@@ -12,7 +12,7 @@
 - **Lý thuyết trò chơi**: Tất cả các nút tham gia vào hệ thống đều phải tuân thủ luật chơi đồng thuận (giao thức PoW, PoS,…) và được thúc đẩy bởi động lực kinh tế.
 
 ### Phân loại
-- **Dựa trên các khả năng của blockchain** mà người ta phân biệt thành 3 loại chính được phát triển từ nền tảng của Bitcoin:
+- **Dựa trên các khả năng của blockchain**, chia blockchain thành 3 loại chính (dựa trên nền tảng của Bitcoin):
     - Loại 1: Chỉ làm việc với tiền điện tử
     - Loại 2: Hỗ trợ tiền điện tử và một tầng logic nghiệp vụ được hỗ trợ bởi thực thi mã, ví dụ: Ethereum.
     - Loại 3: Không liên quan đến tiền tệ nhưng hỗ trợ thực hiện phần mềm cho logic nghiệp vụ, ví dụ: Hyperledger của Linux Foundation.
@@ -24,7 +24,8 @@
 <img src = "https://i.imgur.com/PnvHrLS.png">
 
 - **Ưu, nhược điểm của mỗi loại blockchain**
-<img src = "https://i.imgur.com/qm2PkZo.png"> 
+
+<img src = "https://i.imgur.com/38nNOAI.png"> 
     - Trong khi được phổ biến với việc sử dụng ngày càng nhiều của bitcoin, ethereum và các loại tiền điện tử khác, công nghệ blockchain
 cũng có các ứng dụng đầy hứa hẹn cho nhiều lĩnh vực khác nhau như: hợp đồng pháp lý, bán tài sản, hồ sơ y tế và bất kỳ ngành nào
 khác cần cho phép và ghi lại một loạt các hành động hoặc giao dịch.
@@ -32,4 +33,20 @@ khác cần cho phép và ghi lại một loạt các hành động hoặc giao 
 hàng mà không cần người trung gian. Các giao dịch được xác minh bởi các nút mạng thông qua mật mã và được ghi lại trong một sổ
 cái phân tán công khai được gọi là blockchain.
 
-## 2. Cấu trúc của 1 blockchain
+## 2. Cấu trúc của blockchain
+- Blockchain bao gồm 2 phần chính:
+    - Khối (Block): các khối chứa dữ liệ
+    - Chuỗi (Chain): do các khối chứa dữ liệu liên kết với nhau tạo thành chuỗi
+- Mỗi khối (Block) bao gồm 3 thành phần chính:
+    - **Data**: Các bản ghi dữ liệu đã xác minh của bạn được bảo vệ bằng các thuật toán mã hóa phụ thuộc vào mỗi chuỗi khối (Thông tin người gửi, người nhận, số lượng coin đã được gửi,…)
+    - **Hash**: Là một chuỗi ký tự và số được sinh ngẫu nhiên không giống nhau hoàn toàn. Nó đại diện cụ thể cho khối, mã này là duy nhất và không trùng nhau.
+    - **Previous Hash**: Hashcode của block trước đó, được sử dụng giúp cho các khối liền kề biết khối nào ở trước, khối nào ở sau, nhằm liên kết đúng với nhau. Tuy nhiên khối đầu tiên, bởi vì không có khối nào trước nó nên mã Hash của nó là một chuỗi số 0. Khối đầu tiên này được gọi là Genesis Block tức là “Khối nguyên thủy” hay khối gốc.
+ <img src = "https://file.publish.vn/coin98/2021-07/gan-cac-block-thanh-mot-chuoi-1625732298411.png">
+
+## 3. Cách thức hoạt động của blockchain
+## 4. Tính bảo mật, toàn vẹn dữ liệu
+## 5. Ứng dụng của blockchain
+## 6. Ưu điểm, nhược điểm của blockchain
+
+
+
