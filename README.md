@@ -20,5 +20,5 @@
     - Tư nhân/Được quản lý (Private/Managed)
     - Liên hợp (Consortium)
     - Hỗn hợp (Hybrid)
-<img src = "https://i.imgur.com/KMJQcLN.png">
+<img src = "https://i.imgur.com/PnvHrLS.png">
 
