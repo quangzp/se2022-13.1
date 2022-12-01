@@ -35,15 +35,42 @@ cái phân tán công khai được gọi là blockchain.
 
 ## 2. Cấu trúc của blockchain
 - Blockchain bao gồm 2 phần chính:
-    - Khối (Block): các khối chứa dữ liệ
+    - Khối (Block): các khối chứa dữ liệu
     - Chuỗi (Chain): do các khối chứa dữ liệu liên kết với nhau tạo thành chuỗi
 - Mỗi khối (Block) bao gồm 3 thành phần chính:
     - **Data**: Các bản ghi dữ liệu đã xác minh của bạn được bảo vệ bằng các thuật toán mã hóa phụ thuộc vào mỗi chuỗi khối (Thông tin người gửi, người nhận, số lượng coin đã được gửi,…)
     - **Hash**: Là một chuỗi ký tự và số được sinh ngẫu nhiên không giống nhau hoàn toàn. Nó đại diện cụ thể cho khối, mã này là duy nhất và không trùng nhau.
     - **Previous Hash**: Hashcode của block trước đó, được sử dụng giúp cho các khối liền kề biết khối nào ở trước, khối nào ở sau, nhằm liên kết đúng với nhau. Tuy nhiên khối đầu tiên, bởi vì không có khối nào trước nó nên mã Hash của nó là một chuỗi số 0. Khối đầu tiên này được gọi là Genesis Block tức là “Khối nguyên thủy” hay khối gốc.
  <img src = "https://file.publish.vn/coin98/2021-07/gan-cac-block-thanh-mot-chuoi-1625732298411.png">
+ 
+ ## 3. Các tính chất của blockchain
+ - **Tính phi tập trung (Decentralized)**: Blockchain sẽ hoạt động độc lập theo các thuật toán máy tính, hoàn toàn không bị bất kỳ một tổ chức nào nắm quyền kiểm soát. Chính vì vậy blockchain tránh được rủi ro từ bên thứ 3.
+ - **Tính phân tán (Distributed)**: Các khối chứa dữ liệu giống nhau nhưng được phân tán ở nhiều nơi khác nhau. Nên chẳng may 1 nơi bị mất hoặc hỏng thì dữ liệu vẫn còn trên Blockchain.
+ - **Bất biến**: Dữ liệu trong Blockchain không thể sửa (có thể sửa nhưng sẽ để lại dấu vết) và sẽ lưu trữ mãi mãi.
+ - **Tính bảo mật**: Các thông tin, dữ liệu trong Blockchain được phân tán và an toàn tuyệt đối.
+ - **Tính minh bạch**: Ai cũng có thể theo dõi dữ liệu Blockchain đi từ địa chỉ này tới địa chỉ khác và có thể thống kê toàn bộ lịch sử trên địa chỉ đó.
+ - **Tích hợp Smart contract (hay còn gọi là: hợp đồng thông minh)**: Dựa vào đó các điều khoản được ghi trong hợp đồng thông minh sẽ được thực thi khi các điều kiện trước đó được thỏa mãn, không ai có thể ngăn cản hoặc hủy nó.
 
-## 3. Cách thức hoạt động của blockchain
+## 4. Cách thức hoạt động của blockchain
+### Nguyên tắc sổ cái
+- Mỗi giao dịch trong Blockchain đều được ghi vào một "cuốn sổ cái" và sẽ được chia sẻ cho mỗi node trong mạng (nói cách khác mỗi node trong Blockchain đều đang giữ một bản sao của cuốn sổ cái).
+- Hệ thống Blockchain chỉ ghi lại mỗi giao dịch được yêu cầu chứ không hề theo dõi số dư tài khoản của mỗi ví
+### Nguyên lý mã hoá - công nghệ khoá công khai
+- Để thực hiện các giao dịch trên Blockchain ta cần 1 ví điện tử, ví điện tử này được bảo vệ bằng cặp khoá bảo mật ** khóa riêng tư (chỉ chủ sở hữu biết) và khóa công khai (có thể được người khác biết)**
+- Cặp khóa công khai-riêng tư có tính chất độc đáo là mặc dù dữ liệu được mã hóa bằng khóa riêng tư, nó có thể được giải mã bằng khóa công khai tương ứng và ngược lại.
+- Khi mã hóa một yêu cầu giao dịch bằng khóa riêng tư, có nghĩa là ta đang tạo ra một chữ ký điện tử được các máy tính trong mạng lưới Blockchain sử dụng để kiểm tra chủ thể gửi và tính xác thực của giao dịch
+- Để gửi Bitcoin, cần chứng minh rằng bạn sở hữu khóa riêng tư của một chiếc ví điện tử cụ thể bởi bạn cần sử dụng nó để mã hóa thông điệp yêu cầu giao dịch.
+- Cách triển khai khoá công khai phổ biến nhất là thuật toán RSA, tuy nhiên Blockchain cần một thuật toán hiệu quả và mạnh hơn
+- Mật mã đường cong Elliptic (Elliptic-curve cryptography/ECC) được sử dụng trong Bitcoin cũng như Ethereum blockchain để tạo cặp khóa công khai và riêng tư
+### Nguyên lý tạo khối
+- Các giao dịch gửi lên cùng 1 thời điểm trên mạng lưới blockchain được nhóm với nhau tạo thành một khối. 
+- Các giao dịch chưa được thực hiện trong 1 khối được coi là chưa được xác nhận
+- Mỗi node có thể nhóm các giao dịch với nhau thành một khối và gửi nó vào mạng lưới như một hàm ý cho các khối tiếp theo được gắn vào sau đó. Node nào cũng có thể tạo ra một khối mới.
+- **Vậy câu hỏi đặt ra là: Khối nào sẽ được thêm vào Blockchain ?**
+- Để giải quyết vấn đề này, hệ thống Blockchain sẽ yêu cầu các node giải một vấn đề toán học. 
+- Để được thêm vào Blockchain, mỗi khối phải chứa một đoạn mã đóng vai trò như một đáp án cho một vấn đề toán học phức tạp (đoán số) được tạo ra bằng **hàm mã hóa băm không thể đảo ngược**
+- Mạng lưới quy định mỗi khối được tạo ra sau một quãng thời gian là 10 phút một lần, bởi vì trong mạng lưới luôn có một số lượng lớn các máy tính đều tập trung vào việc đoán ra dãy số này.
+- Node nào giải quyến vấn đề toán học đó trước tiên sẽ là node có quyền gắn khối(block) tiếp theo lên chuối.
 ## 4. Tính bảo mật, toàn vẹn dữ liệu
 ## 5. Ứng dụng của blockchain
 ## 6. Ưu điểm, nhược điểm của blockchain
