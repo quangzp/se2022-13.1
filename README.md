@@ -71,9 +71,55 @@ cái phân tán công khai được gọi là blockchain.
 - Để được thêm vào Blockchain, mỗi khối phải chứa một đoạn mã đóng vai trò như một đáp án cho một vấn đề toán học phức tạp (đoán số) được tạo ra bằng **hàm mã hóa băm không thể đảo ngược**
 - Mạng lưới quy định mỗi khối được tạo ra sau một quãng thời gian là 10 phút một lần, bởi vì trong mạng lưới luôn có một số lượng lớn các máy tính đều tập trung vào việc đoán ra dãy số này.
 - Node nào giải quyến vấn đề toán học đó trước tiên sẽ là node có quyền gắn khối(block) tiếp theo lên chuối.
-## 4. Tính bảo mật, toàn vẹn dữ liệu
-## 5. Ứng dụng của blockchain
-## 6. Ưu điểm, nhược điểm của blockchain
+## 4. Bảo mật, toàn vẹn giao dịch
+- ### Tính bảo mật
+    -  Tính toàn vẹn của một khối được đảm bảo bởi:
+        - Nội dung header của block không bị giả mạo.
+        - Các giao dịch không bị giả mạo.
+        - Các chuyển đổi trạng thái được tính toán, được hash và xác minh.
+    - Trong Ethereum, hash của khối là khối của tất cả các thành phần nằm trong header, bao gồm cả các gốc giao dịch và các hash gốc
+        trạng thái. Nó được tính toán bằng cách áp dụng một biến thể của thuật toán SHA-3 được gọi là Keccak vào tất cả các thành phần
+        của header trong block.
+    - Một block điển hình có khoảng 2.000 giao dịch với Bitcoin và khoảng 100 giao dịch với Ethereum. Chúng ta cần một cách hiệu quả để
+    phát hiện các giả mạo và thẩm định giao dịch hiệu quả. Hash của các giao dịch trong một block được xử lý trong một cấu trúc cây
+    được gọi là hash cây Merkle. Cách này cũng được sử dụng để tính toán hash gốc trạng thái, vì chỉ hash các trạng thái thay đổi mới
+    cần tính toán lại. Nó cũng được sử dụng để hash gốc biên nhận.
+    - Thực thi hợp đồng thông minh trong Ethereum dẫn đến thay đổi trạng thái. Mọi thay đổi trạng thái yêu cầu tính toán lại hash gốc trạng
+    thái. Thay vì tính toán lại hash cho toàn bộ các trạng thái, chỉ có đường dẫn bị ảnh hưởng trong cây Merkle cần phải được tính lại.
+    - Block hash trong Ethereum được tính bằng cách tính toán hash gốc trạng thái, gốc giao dịch và hash gốc biên nhận. Những gốc này
+    cùng với tất cả mục khác trong header được hash cùng với nhau sử dụng một biến nonce để giải câu hỏi proof of work.
+    - Hash khối phục vụ hai mục đích quan trọng:
+        - Xác minh tính toàn vẹn của khối và các giao dịch.
+        - Hình thành liên kết chuỗi bằng cách nhúng hash của khối trước đó vào header khối hiện tại.
 
-
-
+- ### Tính toàn vẹn của giao dịch
+    - Để đảm bảo tính toàn vẹn của một giao dịch cần 3 yếu tố:
+        - Địa chỉ tài khoản độc nhất và bảo mật.
+        - Uỷ quyền giao dịch của người gửi thông qua chữ ký điện tử.
+        - Xác minh rằng nội dung của giao dịch không bị sửa đổi
+    - Địa chỉ của tài khoản được sinh ra bằng cách dùng một cặp mã khoá công khai-riêng tư
+        - Một số có độ dài 256 bit được sinh ngẫu nhiên và chỉ định làm mã khoá riêng tư được bảo vệ bằng mật khẩu.
+        - Sử dụng thuật toán ECC để sinh một mã khoá công khai độc nhất từ mã riêng tư. Đây là cặp mã khoá công khai-riêng tư.
+        - Sau đó áp dụng hàm hash cho khoá công khai để có được địa chỉ tài khoản. Địa chỉ này có kích thước nhỏ hơn, chỉ 20 byte hoặc
+            160 bit
+    - Một giao dịch chuyển tài sản cần phải được uỷ quyền, không thể thoái thác và không thể thay đổi. Xác minh một giao dịch:
+        - Tìm mã hash của trường dữ liệu trong giao dịch. Mã hoá mã hash đó sử dụng mã riêng tư của người gửi. Do đó, giao dịch được ký
+            điện tử để ủy quyền và làm cho giao dịch không thể thoái thác.
+        - Thêm mã hash mới vào giao dịch. Nó có thể được xác thực bởi người khác bằng cách giải mã sử dụng mã công khai của người gửi
+            và tính toán lại mã hash của giao dịch.
+        - So sánh mã hash trên với mã hash nhận được trong chữ ký điện tử. Nếu trùng khớp, chấp nhận giao diện. Ngược lại, từ chối giao
+            dịch đó.
+    - Ngoài ra, để xác thực giao dịch hoàn chỉnh, mốc thời gian, nonce, số dư tài khoản và toàn bộ chi phí cũng phải được xác minh.
+   
+   ## 5. Các loại sàn giao dịch
+    - ### Sàn DEX
+        - DEX (Decentralized Exchange) nghĩa là sàn giao dịch phi tập trung. Tại đây, các giao dịch tiền điện tử được diễn ra ngang hàng giữa những người dùng với nhau     trên nền tảng Blockchain, mà không cần thông qua bất cứ tổ chức trung gian nào. Không ai giữ tiền của bạn và bạn cũng không cần phải tin tưởng sàn giao dịch như        khi sử  dụng sàn giao dịch tiền điện tử tập trung (CEX).
+        - #### Cách thức hoạt động của sàn DEX
+            - Liquidity Pool : Liquidity Pool hay còn gọi là các bể thanh khoản, vì sàn phi tập trung không dùng cơ chế sổ lệnh(nơi người mua và người bán đặt lệnh để              thực hiện giao dịch), nhưng không phải lúc nào cũng cũng có thể khớp lệnh, vì thế các nhà tạo lập thị trường cung cấp thêm một thứ gọi là thanh                         khoản(Liquidity) để trên DEX người dùng có thể gần như khớp lệnh 24/24. Nói cách khác Liquidity Pool là một bể thanh khoản, để người dùng có thể chuyển                 đổi 24/24.
+            - Automated Market Maker : AMM không sử dụng sổ lệnh mà tận dụng các smart contract để tạo ra các nhóm thanh khoản tự động thực hiện giao dịch. AMM tương                   đối thân thiện với người dùng. Các giao dịch trên DEX AMM được thực thi on-chain nên bạn phải tốn phí. Uniswap, Pancakeswap, Sushiswap… là các sàn DEX                  AMM phổ biến nhất hiện nay.
+    - ### Sàn CEX
+        - CEX (Centralized Exchange) Đây là loại sàn giao dịch tập trung, do bên thứ 3 quản lý. Bên thứ 3 có thể là công ty hoặc tổ chức chủ sàn. Khi bạn tiến hành nạp             vào tài khoản trên sàn CEX, dù là loại tài sản tiền điện tử nào thì cũng đều được công ty hoặc tổ chức đó quản lý, kiểm soát.
+        - #### Cách thức hoạt động của sàn CEX
+            - Giao dịch: Ở sàn CEX cho phép những nhà giao dịch mua bán tiền mã hóa bằng tiền tệ Fiat. Ngoài ra, họ cũng cung cấp nhiều dịch vụ bổ sung bao gồm có: lưu                 trữ, giới hạn và thậm chí là giao dịch đòn bẩy và Lending – cho vay trong ngành tiền mã hóa.
+            - Quy định: Những sàn giao dịch tập trung thường có giấy phép hoạt động tùy theo từng quốc gia / khu vực của họ. Vì thế, họ thực hiện các thủ tục kyc và                    Aml nhằm mục đích tuân thủ luật pháp và đảm bảo sự an toàn của khách hàng.
+            - Quyền kiểm soát: Quyền kiểm soát nền tảng và quỹ tiền mã hóa của khách hàng vẫn nằm trong tay của sàn giao dịch. Vì vậy, nếu có bị cuộc tấn công, nó có               thể dẫn đến việc mất tiền mã hóa của khách hàng của họ. Đã có một số cuộc tấn công đã xảy ra trên các sàn giao dịch tiền mã hóa CEX dẫn đến việc mất                    Bitcoin và các đồng tiền mã hóa khác.
