@@ -1,38 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-  </head>
 
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+
+<body>
+  <div>
+    <h3>Trading View</h3>
     <div id="chart"></div>
+  </div>
 
-    <h3>Setting</h3>
+  <div id="trading">
+    <h3>Trading</h3>
+    <form action="/buy" method="post">
+      <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
+      <select id="symbol" name="symbol">
+        {% for symbol in symbols %}
+        <option>{{ symbol['symbol'] }}</option>
+        {% endfor %}
+      </select>
+      <input type="submit" name="buy" value="buy" />
+    </form>
+  </div>
+  <div id="my_balances">
+    <h3>My balances</h3>
+
+    <select id="balance_coins">
+      {% for i in range(balances|length) %}
+      <option value="{{i}}">{{balances[i]['asset']}}</option>
+      {% endfor %}
+    </select>
+    <span id="free">{{balances[0]['free']}}</span>
+  </div>
+  <h3>Setting</h3>
+  <div>
+    <label>RSI</label>
     <div>
-      <label>RSI</label>
-      <div>
-        <input type="checkbox" />
-        <input type="number" id="rsi" name="rsi" placeholder="14" />
-        Overbought
-        <input
-          type="number"
-          id="rsi_over_bought"
-          name="rsi_over_bought"
-          placeholder="70"
-        />
-        Oversold
-        <input
-          type="number"
-          id="rsi_over_sold"
-          name="rsi_over_sold"
-          placeholder="30"
-        />
-      </div>
+      <input type="checkbox" />
+      <input type="number" id="rsi" name="rsi" placeholder="14" />
+      Overbought
+      <input type="number" id="rsi_over_bought" name="rsi_over_bought" placeholder="70" />
+      Oversold
+      <input type="number" id="rsi_over_sold" name="rsi_over_sold" placeholder="30" />
     </div>
-    <script src="{{url_for('static', filename='chart.js')}}"></script>
-  </body>
+  </div>
+  <script src="{{url_for('static', filename='chart.js')}}"></script>
+  <script type="text/javascript">
+
+    var free = document.getElementById("free");
+    var my_balances = JSON.parse('{{ balances | tojson }}');
+    document.getElementById("balance_coins").onchange = function () {
+      var coinIdx = this.options[this.selectedIndex].value;
+      free.style.display = my_balances[coinIdx]['free'];
+    }
+  </script>
+</body>
+
 </html>
