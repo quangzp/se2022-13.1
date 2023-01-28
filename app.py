@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, flash, jsonify
+from flask import Flask, render_template, request, redirect, flash, jsonify
 from binance.client import Client
+from binance.enums import *
 import config, csv
 
 app = Flask(__name__)
-
+app.secret_key = "2023@@2023"
 client = Client(config.API_KEY, config.API_SECRET)
 
 @app.route("/")
