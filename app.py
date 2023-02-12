@@ -21,8 +21,8 @@ def index():
 def buy():
     try:
         order = client.create_order(symbol=request.form['symbol'], 
-            side=SIDE_BUY,
-            type=ORDER_TYPE_MARKET,
+            side=client.SIDE_BUY,
+            type=client.ORDER_TYPE_MARKET,
             quantity=request.form['quantity'])
     except Exception as e:
         flash(e.message, "error")
@@ -33,8 +33,8 @@ def buy():
 def sell():
     try:
         order = client.create_order(symbol=request.form['symbol'], 
-            side=SIDE_SELL,
-            type=ORDER_TYPE_MARKET,
+            side=client.SIDE_SELL,
+            type=client.ORDER_TYPE_MARKET,
             quantity=request.form['quantity'])
     except Exception as e:
         flash(e.message, "error")
