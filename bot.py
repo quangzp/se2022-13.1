@@ -1,8 +1,8 @@
-import websocket, json, pprint, talib, numpy
+import websocket, json, pprint, talib, numpy, asyncio
 from binance.spot import Spot as Client
 from binance.enums import *
 import config
-
+websocket.enableTrace(True)
 BASE_URL = 'https://testnet.binance.vision'
 RSI_PERIOD = 14
 RSI_OVERBOUGHT = 70
@@ -12,6 +12,7 @@ SOCKET = f"wss://stream.binance.com:9443/ws/"
 
 class TradeBot:
     def __init__(self, client, symbol):
+        self.canceled = False
         self.closes = []
         self.in_position = False
         self.client = client
@@ -20,11 +21,15 @@ class TradeBot:
         self.ws = websocket.WebSocketApp(self.socket, on_open=self.on_open, on_close=self.on_close, on_message=self.on_message)
         
     def run(self):
-        ssself.ws.run_forever()
+        self.ws.run_forever()
+        
         
     def stop(self):
-        self.shouldStop = True
+        print("==================================================================================================================")
+        self.ws.keep_running = False
+        self.running = False
         self.ws.close()
+        
     
     def order(client, symbol, side, quantity, order_type = ORDER_TYPE_MARKET):
         try:
@@ -46,7 +51,9 @@ class TradeBot:
 
     def on_message(self, ws, message):
         # global closes, in_position
-        
+        if self.canceled:
+            self.stop()
+            return
         print('received message')
         json_message = json.loads(message)
         pprint.pprint(json_message)
@@ -90,4 +97,10 @@ class TradeBot:
                             
 client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)           
 c = TradeBot(client, 'BNBUSDT')
-print(client.account())
+
+# async def main():
+#     task = asyncio.create_task(c.run())
+#     c.canceled = True
+#     await task
+
+# asyncio.run(main())

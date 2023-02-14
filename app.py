@@ -1,49 +1,73 @@
-from flask import Flask, render_template, request, redirect, flash, jsonify
-from binance.client import Client
+from binance.spot import Spot as Client
 from binance.enums import *
-import config, csv
+from flask import Flask, render_template, request, redirect, flash, jsonify, make_response
+from flask_socketio import SocketIO, emit
+import config, bot, threading, modal, ws_server
 
+
+# print(client.klines("BTCUSDT", "1m"))
+# # Get last 10 klines of BNBUSDT at 1h interval
+# print(client.klines("BNBUSDT", "1h", limit=10))
+# print(float(client.account()['balances'][6]['free']) - 1.0)
+BASE_URL = 'https://testnet.binance.vision'
+clients = {}
+bots = {}
 app = Flask(__name__)
+socketio = SocketIO(app)
 app.secret_key = "2023@@2023"
-client = Client(config.API_KEY, config.API_SECRET)
 
-@app.route("/")
+@app.route('/')
 def index():
-    info = client.get_account()
+    render_template('index.html')
+
+@app.route("/login", methods=['POST'])
+def login():
+    data = request.get_json()
+    client = Client(base_url = BASE_URL, key = data['key'], secret = data['secret'])
+    try:
+        client.account()
+    except:
+        return make_response("un_authentication", 401)
     
-    balances = info['balances']
+    custom_client = modal.ClientCustom(client)
+    clients[custom_client.uuid] = client
     
-    exchange_info = client.get_exchange_info()
-    symbols = exchange_info['symbols']
-    return render_template('index.html', balances = balances, symbols=symbols)
+    message = {"uuid" : custom_client.uuid}
+    return jsonify(message)
 
 @app.route("/buy", methods=['POST'])
 def buy():
     try:
-        order = client.create_order(symbol=request.form['symbol'], 
-            side=client.SIDE_BUY,
-            type=client.ORDER_TYPE_MARKET,
-            quantity=request.form['quantity'])
+        data = request.get_json()
+        client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)
+        
+        order = client.new_order(
+            symbol=data['symbol'], 
+            side = SIDE_BUY,
+            type=  ORDER_TYPE_MARKET,
+            quantity=data['quantity'])
+        
     except Exception as e:
-        flash(e.message, "error")
+        return make_response("error", 500)
 
-    return redirect('/')
+    return make_response(order, 200)
 
-@app.route("/sell")
+@app.route("/sell", methods=["GET", "POST"])
 def sell():
     try:
-        order = client.create_order(symbol=request.form['symbol'], 
-            side=client.SIDE_SELL,
-            type=client.ORDER_TYPE_MARKET,
-            quantity=request.form['quantity'])
+        req = request.get_json()
+        
+        client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)
+        order = client.create_test_order(
+            symbol = req['symbol'], 
+            side= SIDE_SELL,
+            type= ORDER_TYPE_MARKET,
+            quantity = req['quantity'])
+        
     except Exception as e:
         flash(e.message, "error")
 
-    return redirect('/')
-
-@app.route("/settings")
-def settings():
-    return "settings"
+    return make_response("",200)
 
 @app.route("/history")
 def history():
@@ -59,7 +83,24 @@ def history():
             "low": data[3], 
             "close": data[4]
         }
-
         processed_candlesticks.append(candlestick)
 
     return jsonify(processed_candlesticks)
+
+@app.route("/start-bot", methods=["POST"])
+def start_bot():
+    data = request.get_json()
+    client  = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)
+    bot = bot.TradeBot(client, "BNBUSDT")
+    thread = threading.Thread(target=bot.run)
+    thread.start()
+    return make_response("run",200)
+
+@app.route("/kill-bot", methods=["POST"])
+def kill_bot():
+    bot.canceled = True
+    return make_response("stop",200)
+    
+
+if __name__ == '__main__':
+    socketio.run(app)
