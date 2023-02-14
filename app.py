@@ -25,7 +25,7 @@ def index():
 @app.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
-    client = Client(base_url = BASE_URL, key = data['key'], secret = data['secret'])
+    client = Client(base_url = BASE_URL, api_key = data['key'], api_secret = data['secret'])
     try:
         client.account()
     except:
@@ -60,20 +60,21 @@ def sell():
         data = request.get_json()
         
         client = clients.get(data['uuid'])
-        order = client.create_test_order(
-            symbol = req['symbol'], 
+        order = client.new_order(
+            symbol = data['symbol'], 
             side= SIDE_SELL,
             type= ORDER_TYPE_MARKET,
-            quantity = req['quantity'])
+            quantity = data['quantity'])
         
     except Exception as e:
         flash(e.message, "error")
 
-    return make_response("",200)
+    return make_response(order,200)
 
 @app.route("/history")
 def history():
-    candlesticks = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_1MINUTE)
+    data = request.get_json()
+    candlesticks = clients.get(data['uuid']).klines("BTCUSDT", "1m")
 
     processed_candlesticks = []
 

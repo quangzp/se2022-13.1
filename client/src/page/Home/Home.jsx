@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import './index.css'
-import { login } from './Service/BinanceService';
+import { buy, login, sell } from './Service/BinanceService';
 const Home = () => {
+
 
     const [btcQuantity, setBtcQuantity] = useState();
     const [ethQuantity, setEthQuantity] = useState();
@@ -10,51 +11,47 @@ const Home = () => {
 
     const [apiKey, setApiKey] = useState();
     const [secretKey, setSecretKey] = useState();
+    const [uuid, setUuid] = useState();
 
     const submitHandle = async (apiKey, secretKey) => {
         if (!apiKey || !secretKey) {
             toast.error("Please enter key!")
             return;
         }
-        const data = await login({ key: apiKey, secret: secretKey });
-        console.log(data);
-        return data;
-
+        const data = await login({ key: apiKey, secret: secretKey })
+        setUuid(data.uuid);
+        console.log(data.uuid)
+        return;
     }
-    const buyHandle = (coin, quantity, apiKey, secretKey) => {
-        if (!quantity || !apiKey || !secretKey) {
+    const buyHandle = async (coin, quantity, uuid) => {
+        if (!quantity || !uuid) {
             toast.error("Please fully fill!")
         }
-        if (!quantity){
+        else if (!quantity){
             toast.error("Please enter quantity!")
         }
         else {
-            const data = {
-                key: apiKey,
-                secret: secretKey,
-                symbol: coin,
-                quantity: quantity,
-            }
+            const number = Number(quantity)
+            const data = await buy({uuid:uuid, symbol: coin, quantity: number})
+            console.log(data)
+            console.log("Success")
+        }
+
+    }
+
+    const sellHandle = async (coin, quantity, uuid) => {
+        if (!quantity || !uuid) {
+            toast.error("Please fully fill!")
+        }
+        else if (!quantity){
+            toast.error("Please enter quantity!")
+        }
+        else {
+            const number = Number(quantity)
+            const data = await sell({uuid:uuid, symbol: coin, quantity: number})
             console.log(data)
         }
 
-    }
-
-    const sellHandle = (coin, quantity, apiKey, secretKey) => {
-        if (!quantity || !apiKey || !secretKey) {
-            toast.error("Please fully fill!")
-        }
-        if (!quantity){
-            toast.error("Please enter quantity!")
-        }
-        else {
-            const data = {
-                key: apiKey,
-                secret: secretKey,
-                symbol: coin,
-                quantity: quantity,
-            }
-        }
     }
 
     const autoInvestHandle = (coin, quantity, apiKey, secretKey) => {
@@ -120,9 +117,9 @@ const Home = () => {
                             </td>
                             <td>
                                 <div className='action-col'>
-                                    <button class="btn btn-warning btn-action" onClick={() => buyHandle("BTC", btcQuantity, apiKey, secretKey)}>Buy</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => sellHandle("BTC", btcQuantity, apiKey, secretKey)}>Sell</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => autoInvestHandle("BTC", btcQuantity, apiKey, secretKey)}>Auto Invest</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => buyHandle("BTCUSDT", btcQuantity, uuid)}>Buy</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => sellHandle("BTCUSDT", btcQuantity, uuid)}>Sell</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => autoInvestHandle("BTCUSDT", btcQuantity, uuid)}>Auto Invest</button>
                                 </div>
                             </td>
                         </tr>
@@ -138,9 +135,9 @@ const Home = () => {
                             </td>
                             <td>
                                 <div className='action-col'>
-                                    <button class="btn btn-warning btn-action" onClick={() => buyHandle("ETH", ethQuantity, apiKey, secretKey)}>Buy</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => sellHandle("ETH", ethQuantity, apiKey, secretKey)}>Sell</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => autoInvestHandle("ETH", ethQuantity, apiKey, secretKey)}>Auto Invest</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => buyHandle("ETHUSDT", ethQuantity, uuid)}>Buy</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => sellHandle("ETHUSDT", ethQuantity, uuid)}>Sell</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => autoInvestHandle("ETHUSDT", ethQuantity, apiKey, secretKey)}>Auto Invest</button>
                                 </div>
                             </td>
                         </tr>
@@ -157,9 +154,9 @@ const Home = () => {
                             </td>
                             <td>
                                 <div className='action-col'>
-                                    <button class="btn btn-warning btn-action" onClick={() => buyHandle("BNB", bnbQuantity, apiKey, secretKey)}>Buy</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => sellHandle("BNB", bnbQuantity, apiKey, secretKey)}>Sell</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => autoInvestHandle("BNB", bnbQuantity, apiKey, secretKey)}>Auto Invest</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => buyHandle("BNBUSDT", bnbQuantity, uuid)}>Buy</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => sellHandle("BNBUSDT", bnbQuantity, uuid)}>Sell</button>
+                                    <button class="btn btn-warning btn-action" onClick={() => autoInvestHandle("BNBUSDT", bnbQuantity, apiKey, secretKey)}>Auto Invest</button>
                                 </div>
                             </td>
                         </tr>
