@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import './index.css'
+import { login } from './Service/BinanceService';
 const Home = () => {
 
     const [btcQuantity, setBtcQuantity] = useState();
@@ -9,9 +10,17 @@ const Home = () => {
 
     const [apiKey, setApiKey] = useState();
     const [secretKey, setSecretKey] = useState();
-    localStorage.setItem('apiKey', apiKey);
-    localStorage.setItem('secretKey', secretKey);
-    console.log(localStorage.getItem('apiKey') + " " + localStorage.getItem('secretKey'));
+
+    const submitHandle = async (apiKey, secretKey) => {
+        if (!apiKey || !secretKey) {
+            toast.error("Please enter key!")
+            return;
+        }
+        const data = await login({ key: apiKey, secret: secretKey });
+        console.log(data);
+        return data;
+
+    }
     const buyHandle = (coin, quantity, apiKey, secretKey) => {
         if (!quantity || !apiKey || !secretKey) {
             toast.error("Please fully fill!")
@@ -77,7 +86,7 @@ const Home = () => {
                     <input className='input-key' type="text" placeholder='Enter Secret Key' onChange={(e) => setSecretKey(e.target.value)} />
                 </div>
                 <div className='key-button'>
-                    <button className='btn btn-warning'>Confirm</button>
+                    <button className='btn btn-warning' onClick={() => submitHandle(apiKey,secretKey)}>Confirm</button>
                 </div>
             </div>
             <div className='table-container'>

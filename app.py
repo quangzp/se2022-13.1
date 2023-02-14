@@ -1,6 +1,7 @@
 from binance.spot import Spot as Client
 from binance.enums import *
 from flask import Flask, render_template, request, redirect, flash, jsonify, make_response
+from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 import bot, threading, modal
 
@@ -13,7 +14,8 @@ BASE_URL = 'https://testnet.binance.vision'
 clients = {}
 bots = {}
 app = Flask(__name__)
-socketio = SocketIO(app)
+CORS(app)
+# socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = "2023@@2023"
 
 @app.route('/')
@@ -93,9 +95,9 @@ def start_bot():
     client  = clients.get(data['uuid'])
     if client is not None:
         print ("No client")
-    bot = bot.TradeBot(client, "BNBUSDT")
-    bots[data['uuid']] = bot
-    thread = threading.Thread(target=bot.run)
+    b = bot.TradeBot(client, 'BNBUSDT')
+    bots[data['uuid']] = b
+    thread = threading.Thread(target=b.run)
     thread.start()
     return make_response("run",200)
 
@@ -107,5 +109,5 @@ def kill_bot():
     return make_response("stop",200)
     
 
-if __name__ == '__main__':
-    socketio.run(app)
+# if __name__ == '__main__':
+#     socketio.run(app)
