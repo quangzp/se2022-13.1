@@ -9,6 +9,7 @@ span {
     justify-content: center;
     border-style: solid none solid none ;
     border: #DEE2E6 solid;
+    margin-bottom: 20px;
 }
 .key-input{
     margin: 20px;
@@ -34,9 +35,4 @@ input::placeholder{
 .table-container{
     width: 1200px;
     margin: auto;
-}
-
-.action-col {
-    width: 500px;
-
 }
