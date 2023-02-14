@@ -1,7 +1,7 @@
 import websocket, json, pprint, talib, numpy, asyncio
 from binance.spot import Spot as Client
 from binance.enums import *
-websocket.enableTrace(True)
+# websocket.enableTrace(True)
 BASE_URL = 'https://testnet.binance.vision'
 RSI_PERIOD = 14
 RSI_OVERBOUGHT = 70
@@ -24,7 +24,6 @@ class TradeBot:
         
         
     def stop(self):
-        print("==================================================================================================================")
         self.ws.keep_running = False
         self.running = False
         self.ws.close()
@@ -32,7 +31,6 @@ class TradeBot:
     
     def order(client, symbol, side, quantity, order_type = ORDER_TYPE_MARKET):
         try:
-            print("sending order")
             order = client.new_order(symbol=symbol, side=side, type=order_type, quantity=quantity)
             print(order)
         except Exception as e:
@@ -42,7 +40,7 @@ class TradeBot:
         return True
     
     def on_open(self, ws):
-        print(f'opened connection')
+        print('opened connection')
        
 
     def on_close(self, ws):
@@ -53,9 +51,8 @@ class TradeBot:
         if self.canceled:
             self.stop()
             return
-        print('received message')
         json_message = json.loads(message)
-        pprint.pprint(json_message)
+        # pprint.pprint(json_message)
 
         candle = json_message['k']
 
@@ -63,15 +60,12 @@ class TradeBot:
         close = candle['c']
 
         if is_candle_closed:
-            print("candle closed at {}".format(close))
             self.closes.append(float(close))
-            print("closes")
             print(self.closes)
 
             if len(self.closes) > RSI_PERIOD:
                 np_closes = numpy.array(self.closes)
                 rsi = talib.RSI(np_closes, RSI_PERIOD)
-                print("all rsi-s calculated so far")
                 print(rsi)
                 last_rsi = rsi[-1]
                 print("the current rsi is {}".format(last_rsi))
