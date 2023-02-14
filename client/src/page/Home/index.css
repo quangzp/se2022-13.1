@@ -1,0 +1,42 @@
+span {
+    font-weight: 600;
+    margin-right: 8px;
+    font-size: 20px;
+}
+.key-form {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    border-style: solid none solid none ;
+    border: #DEE2E6 solid;
+}
+.key-input{
+    margin: 20px;
+}
+.key-button{
+    margin: 15px 0 0 20px;
+}
+
+.input-key {
+    width: 240px;
+}
+.input-key::placeholder {
+    font-size: 16px;
+}
+.btn-action{
+    margin-right: 10px;
+}
+
+input::placeholder{
+    font-size: 12px;
+}
+
+.table-container{
+    width: 1200px;
+    margin: auto;
+}
+
+.action-col {
+    width: 500px;
+
+}
