@@ -1,16 +1,10 @@
-import asyncio
+from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
+import config
 
-async def handler(websocket):
-    while True:
-        # message = await websocket.recv()
-        await asyncio.sleep(1)
-        print("ok")
-
-
-async def main():
-    async with websockets.serve(handler, "", 8000):
-        await asyncio.Future()  # run forever
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+client = Client(config.API_KEY, config.API_SECRET, tld ="vision", testnet = True)
+client.create_order(
+    symbol='BNBUSDT',
+    side= Client.SIDE_BUY,
+    type= Client.ORDER_TYPE_MARKET,
+    quantity=1)
+print(client.get_account())

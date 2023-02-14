@@ -1,7 +1,6 @@
 import websocket, json, pprint, talib, numpy, asyncio
 from binance.spot import Spot as Client
 from binance.enums import *
-import config
 websocket.enableTrace(True)
 BASE_URL = 'https://testnet.binance.vision'
 RSI_PERIOD = 14
@@ -95,8 +94,8 @@ class TradeBot:
                         if order_succeeded:
                             self.in_position = True
                             
-client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)           
-c = TradeBot(client, 'BNBUSDT')
+# client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)           
+# c = TradeBot(client, 'BNBUSDT')
 
 # async def main():
 #     task = asyncio.create_task(c.run())

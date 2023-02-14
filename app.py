@@ -2,7 +2,7 @@ from binance.spot import Spot as Client
 from binance.enums import *
 from flask import Flask, render_template, request, redirect, flash, jsonify, make_response
 from flask_socketio import SocketIO, emit
-import config, bot, threading, modal, ws_server
+import bot, threading, modal
 
 
 # print(client.klines("BTCUSDT", "1m"))
@@ -39,7 +39,7 @@ def login():
 def buy():
     try:
         data = request.get_json()
-        client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)
+        client = clients.get(data['uuid'])
         
         order = client.new_order(
             symbol=data['symbol'], 
@@ -55,9 +55,9 @@ def buy():
 @app.route("/sell", methods=["GET", "POST"])
 def sell():
     try:
-        req = request.get_json()
+        data = request.get_json()
         
-        client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)
+        client = clients.get(data['uuid'])
         order = client.create_test_order(
             symbol = req['symbol'], 
             side= SIDE_SELL,
@@ -90,14 +90,19 @@ def history():
 @app.route("/start-bot", methods=["POST"])
 def start_bot():
     data = request.get_json()
-    client  = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)
+    client  = clients.get(data['uuid'])
+    if client is not None:
+        print ("No client")
     bot = bot.TradeBot(client, "BNBUSDT")
+    bots[data['uuid']] = bot
     thread = threading.Thread(target=bot.run)
     thread.start()
     return make_response("run",200)
 
 @app.route("/kill-bot", methods=["POST"])
 def kill_bot():
+    data = request.get_json()
+    bot = bots.get(data['uuid'])
     bot.canceled = True
     return make_response("stop",200)
     
