@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
+import io from 'socket.io-client'
 import './index.css'
 import { buy, login, sell, startBot, stopBot } from './Service/BinanceService';
 
@@ -16,6 +17,9 @@ const Home = () => {
     const [secretKey, setSecretKey] = useState();
     const [uuid, setUuid] = useState();
 
+    
+
+
     const submitHandle = async (apiKey, secretKey) => {
         if (!apiKey || !secretKey) {
             toast.error("Please enter key!")
@@ -27,9 +31,13 @@ const Home = () => {
         } else {
             setUuid(data.uuid);
             toast.success("Success!")
+            const socket = io("http://127.0.0.1:5000")
+            socket.emit("join", uuid)
+            socket.on("update_profit", function (msg) {
+                console.log(msg);
+            })
         }
         console.log(data)
-        return;
     }
     const buyHandle = async (coin, quantity, uuid) => {
         if (!quantity || !uuid) {

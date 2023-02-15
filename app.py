@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, jsonify, mak
 from flask_cors import CORS
 from flask_socketio import SocketIO
 import bot, threading, modal
+from binance.spot import Spot as Client
 from threading import Lock
 
 
@@ -17,29 +18,27 @@ CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = "2023@@2023"
 
-# thread = None
+thread = None
 thread_lock = Lock()
 
 def background_thread(client):
     print("Generating random sensor values")
     while True:
-        socketio.emit(f'update_profit-{client.listen_key}', client.get_profit())
-        socketio.sleep(2)
+        socketio.emit('update_profit', client.get_profit())
+        socketio.sleep(1.5)
 # @socketio.on('join')
 # def connect(uuid):
 
 @socketio.on('join')
 def join(uuid):
     global thread
-    global thread
     client = clients.get(uuid)
-    
     if client is None:
         return
-    
     with thread_lock:
-        # if thread is None:
-            socketio.start_background_task(background_thread, client)
+        if thread is None:
+            thread = socketio.start_background_task(background_thread, client)
+        
 
 @app.route("/login", methods=['POST'])
 def login():
@@ -77,24 +76,25 @@ def sell():
 
     return make_response(order,200)
 
-# @app.route("/history")
-# def history():
-#     data = request.get_json()
-#     candlesticks = clients.get(data['uuid']).klines("BTCUSDT", "1m")
+@app.route("/history")
+def history():
+    #data = request.get_json()
+    client = Client()
+    candlesticks = client.klines("BTCUSDT", "1m")
+    print("hi")
+    processed_candlesticks = []
 
-#     processed_candlesticks = []
+    for data in candlesticks:
+        candlestick = { 
+            "time": data[0] / 1000, 
+            "open": data[1],
+            "high": data[2], 
+            "low": data[3], 
+            "close": data[4]
+        }
+        processed_candlesticks.append(candlestick)
 
-#     for data in candlesticks:
-#         candlestick = { 
-#             "time": data[0] / 1000, 
-#             "open": data[1],
-#             "high": data[2], 
-#             "low": data[3], 
-#             "close": data[4]
-#         }
-#         processed_candlesticks.append(candlestick)
-
-#     return jsonify(processed_candlesticks)
+    return jsonify(processed_candlesticks)
 
 @app.route("/start-bot", methods=["POST"])
 def start_bot():
