@@ -32,6 +32,14 @@ class CustomClient:
             quantity = quantity)
         return order
     
+    def get_balances(self):
+        bs = self.my_client.account()['balances']
+        balances = []
+        balances.append(bs[0])
+        balances.append(bs[1])
+        balances.append(bs[3])
+        return balances
+    
     def calculate_profit(self, trades):
         holding_avg_price = 0 
         holding_amount = 0 

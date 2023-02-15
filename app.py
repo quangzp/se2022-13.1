@@ -51,7 +51,7 @@ def login():
     
     clients[custom_client.uuid] = custom_client
     
-    message = {"uuid" : custom_client.uuid, "listen_key" : custom_client.listen_key}
+    message = {"uuid" : custom_client.uuid, "balances" : custom_client.get_balances()}
     return jsonify(message)
 
 @app.route("/buy", methods=['POST'])
@@ -60,21 +60,35 @@ def buy():
         data = request.get_json()
         custom_client = clients.get(data['uuid'])
         order = custom_client.buy(data['symbol'], data['quantity'])
+        return make_response(order, 200)
     except Exception as e:
         return make_response("error", 500)
-
-    return make_response(order, 200)
 
 @app.route("/sell", methods=["GET", "POST"])
 def sell():
     try:
         data = request.get_json()
         custom_client = clients.get(data['uuid'])
-        order = order = custom_client.sell(data['symbol'], data['quantity'])
+        order = custom_client.sell(data['symbol'], data['quantity'])
+        return make_response(order,200)
     except Exception as e:
-        flash(e.message, "error")
+        return make_response("error", 500)
 
-    return make_response(order,200)
+@app.route("/balances", methods=["GET"])
+def get_balances():
+    try:
+        data = request.get_json()
+        custom_client = clients.get(data['uuid'])
+        if custom_client is None:
+            return make_response("unauthen",401)
+        balances = custom_client.get_balances()
+        return make_response(balances,200)
+    except:
+        return make_response("error", 500)
+
+    
+
+
 
 @app.route("/history")
 def history():
