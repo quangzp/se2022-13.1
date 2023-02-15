@@ -46,9 +46,18 @@ export const stopBot = async ({ uuid }) => {
     const url = 'http://127.0.0.1:5000/kill-bot'
     try {
         const res = await axios.post(url, { uuid })
-        console.log(res.data);
         return res.status;
     } catch (error) {
+        return error.response.data.massage;
+    }
+}
+
+export const getBalance = async ({ uuid }) => {
+    const url = 'http://127.0.0.1:5000/balances'
+    try {
+        const req = await axios.post(url, { uuid })
+        return req.data
+    } catch(error) {
         return error.response.data.massage;
     }
 }

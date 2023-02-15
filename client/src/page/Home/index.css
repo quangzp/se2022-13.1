@@ -40,3 +40,7 @@ input::placeholder{
 .btn-bot {
     width: 100px;
 }
+
+.btn-submitform {
+    width: 150px;
+}

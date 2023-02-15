@@ -74,7 +74,7 @@ def sell():
     except Exception as e:
         return make_response("error", 500)
 
-@app.route("/balances", methods=["GET"])
+@app.route("/balances", methods=["POST"])
 def get_balances():
     try:
         data = request.get_json()

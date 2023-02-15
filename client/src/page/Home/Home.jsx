@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
-import io from 'socket.io-client'
 import './index.css'
-import { buy, login, sell, startBot, stopBot } from './Service/BinanceService';
+import { buy, getBalance, login, sell, startBot, stopBot } from './Service/BinanceService';
 
 const Home = () => {
     const [btcBot, setBtcBot] = useState(false);
@@ -13,12 +12,15 @@ const Home = () => {
     const [ethQuantity, setEthQuantity] = useState();
     const [bnbQuantity, setBnbQuantity] = useState();
 
+    const [btcBalance, setBtcBalance] = useState(0);
+    const [ethBalance, setEthBalance] = useState(0);
+    const [bnbBalance, setBnbBalance] = useState(0);
+
     const [apiKey, setApiKey] = useState();
     const [secretKey, setSecretKey] = useState();
     const [uuid, setUuid] = useState();
 
-    
-
+    const [isConfimed, setIsConfermed] = useState(false);
 
     const submitHandle = async (apiKey, secretKey) => {
         if (!apiKey || !secretKey) {
@@ -30,12 +32,11 @@ const Home = () => {
             toast.error("Error!")
         } else {
             setUuid(data.uuid);
+            setIsConfermed(true);
+            setBtcBalance(data.balances[1].free);
+            setEthBalance(data.balances[2].free);
+            setBnbBalance(data.balances[0].free);
             toast.success("Success!")
-            const socket = io("http://127.0.0.1:5000")
-            socket.emit("join", uuid)
-            socket.on("update_profit", function (msg) {
-                console.log(msg);
-            })
         }
         console.log(data)
     }
@@ -54,6 +55,11 @@ const Home = () => {
             } else {
                 toast.error("Purchase failed!")
             }
+            const balance = await getBalance({ uuid: uuid })
+            console.log(balance)
+            setBtcBalance(balance[1].free);
+            setEthBalance(balance[2].free);
+            setBnbBalance(balance[0].free);
             console.log(data)
         }
 
@@ -71,6 +77,11 @@ const Home = () => {
             const data = await sell({ uuid: uuid, symbol: coin, quantity: number })
             if (data === 200) {
                 toast.success("Successfully sell!")
+                const balance = await getBalance({ uuid: uuid })
+                console.log(balance)
+                setBtcBalance(balance[1].free);
+                setEthBalance(balance[2].free);
+                setBnbBalance(balance[0].free);
             } else {
                 toast.error("Sell failed!")
             }
@@ -90,22 +101,30 @@ const Home = () => {
             const number = Number(quantity)
             console.log(uuid)
             const data = await startBot({ uuid: uuid, symbol: coin, quantity: number })
+            console.log(data)
             if (data === 200) {
-                if(coin === 'BTCUSDT') {
+                if (coin === 'BTCUSDT') {
                     setBtcBot(true)
                 }
-                if(coin === 'BNBUSDT') {
+                if (coin === 'BNBUSDT') {
                     setBnbBot(true)
                 }
-                if(coin === 'ETHUSDT') {
+                if (coin === 'ETHUSDT') {
                     setEthBot(true)
                 }
                 toast.success("Bot is started!")
-                
+
             } else {
                 toast.error("Error!")
             }
         }
+    }
+
+    const handleGetBalances = async (uuid) => {
+        const balances = await getBalance({ uuid: uuid })
+        setBtcBalance(balances[1].free);
+        setEthBalance(balances[2].free);
+        setBnbBalance(balances[0].free);
     }
 
     const stopBotHandle = async (uuid) => {
@@ -132,7 +151,7 @@ const Home = () => {
                     <input className='input-key' type="text" placeholder='Enter Secret Key' onChange={(e) => setSecretKey(e.target.value)} />
                 </div>
                 <div className='key-button'>
-                    <button className='btn btn-warning' onClick={() => submitHandle(apiKey, secretKey)}>Confirm</button>
+                    {isConfimed ? <button className='btn btn-warning btn-submitform' onClick={() => handleGetBalances(uuid)}>Get Balances</button> : <button className='btn btn-warning btn-submitform' onClick={() => submitHandle(apiKey, secretKey)}>Confirm</button>}
                 </div>
             </div>
             <div className='table-container'>
@@ -141,9 +160,6 @@ const Home = () => {
                         <tr style={{ backgroundColor: "#EDEDED" }}>
                             <th>
                                 <div className='product-col'>Product</div>
-                            </th>
-                            <th>
-                                <div className='history-col'>History</div>
                             </th>
                             <th>
                                 <div className='quantity-col'>Quantity</div>
@@ -162,28 +178,22 @@ const Home = () => {
                                 <div>BTC</div>
                             </td>
                             <td>
-                                <button class="btn btn-warning">Chart</button>
-                            </td>
-                            <td>
                                 <input className='quantity-input' type="number" min="0" placeholder='buy/sell' onChange={(e) => setBtcQuantity(e.target.value)} />
                             </td>
                             <td>
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("BTCUSDT", btcQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("BTCUSDT", btcQuantity, uuid)}>Sell</button>
-                                    {!btcBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BTCUSDT", btcQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
+                                    {!btcBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BTCUSDT", btcQuantity, uuid)}>Run Bot</button> : <button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
-                                <div>0</div>
+                                <div>{btcBalance}</div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <div>ETH</div>
-                            </td>
-                            <td>
-                                <button class="btn btn-warning">Chart</button>
                             </td>
                             <td>
                                 <input className='quantity-input' type="number" placeholder='buy/sell' onChange={(e) => setEthQuantity(e.target.value)} />
@@ -192,11 +202,11 @@ const Home = () => {
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("ETHUSDT", ethQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("ETHUSDT", ethQuantity, uuid)}>Sell</button>
-                                    {!ethBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("ETHUSDT", ethQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
+                                    {!ethBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("ETHUSDT", ethQuantity, uuid)}>Run Bot</button> : <button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
-                                <div>0</div>
+                                <div>{ethBalance}</div>
                             </td>
                         </tr>
                         <tr>
@@ -204,21 +214,17 @@ const Home = () => {
                                 <div>BNB</div>
                             </td>
                             <td>
-                                <button class="btn btn-warning">Chart</button>
-                            </td>
-
-                            <td>
                                 <input className='quantity-input' type="number" placeholder='buy/sell' onChange={(e) => setBnbQuantity(e.target.value)} />
                             </td>
                             <td>
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("BNBUSDT", bnbQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("BNBUSDT", bnbQuantity, uuid)}>Sell</button>
-                                    {!bnbBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BNBUSDT", bnbQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
+                                    {!bnbBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BNBUSDT", bnbQuantity, uuid)}>Run Bot</button> : <button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
-                                <div>0</div>
+                                <div>{bnbBalance}</div>
                             </td>
                         </tr>
                     </tbody>
