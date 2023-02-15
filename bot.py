@@ -88,7 +88,7 @@ class TradeBot:
                         order_succeeded = self.order(self.client, self.symbol ,SIDE_BUY, TRADE_QUANTITY)
                         if order_succeeded:
                             self.in_position = True
-                            
+                
 # client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)           
 # c = TradeBot(client, 'BNBUSDT')
 

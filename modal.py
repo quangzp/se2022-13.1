@@ -1,5 +1,4 @@
 from binance.spot import Spot
-from binance.websocket.spot.websocket_stream import SpotWebsocketStreamClient
 from binance.spot import Spot as SpotAPIClient
 import uuid
 
@@ -11,7 +10,7 @@ WSS = '"wss://testnet.binance.vision/ws-api/v3"'
 
 class CustomClient:
     def __init__(self, key, secret):
-        self.uuid = str(1)
+        self.uuid = str(uuid.uuid4())
         self.my_client = Spot(base_url = BASE_URL,  api_key = key, api_secret = secret)
         self.my_sws = SpotAPIClient(key , base_url="https://testnet.binance.vision")
         self.listen_key = self.my_sws.new_listen_key()['listenKey']

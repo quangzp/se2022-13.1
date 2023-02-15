@@ -35,7 +35,8 @@ export const startBot = async ({ uuid, symbol, quantity }) => {
     const url = 'http://127.0.0.1:5000/start-bot'
     try {
         const res = await axios.post(url, { uuid, symbol, quantity })
-        return res.data
+        console.log(res.data);
+        return res.status;
     } catch (error) {
         return error.response.data.massage;
     }

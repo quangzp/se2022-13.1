@@ -17,14 +17,14 @@ CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = "2023@@2023"
 
-thread = None
+# thread = None
 thread_lock = Lock()
 
 def background_thread(client):
     print("Generating random sensor values")
     while True:
-        socketio.emit('update_profit', client.get_profit())
-        socketio.sleep(1)
+        socketio.emit(f'update_profit-{client.listen_key}', client.get_profit())
+        socketio.sleep(2)
 # @socketio.on('join')
 # def connect(uuid):
 
@@ -38,8 +38,8 @@ def join(uuid):
         return
     
     with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_thread, client)
+        # if thread is None:
+            socketio.start_background_task(background_thread, client)
 
 @app.route("/login", methods=['POST'])
 def login():
@@ -100,13 +100,13 @@ def sell():
 def start_bot():
     data = request.get_json()
     custom_client  = clients.get(data['uuid'])
-    if custom_client is not None:
+    if custom_client is None:
         return make_response("unauthen",401)
     
     b = bot.TradeBot(custom_client.my_client, data['symbol'])
     bots[data['uuid']] = b
-    thread = threading.Thread(target=b.run)
-    thread.start()
+    t = threading.Thread(target=b.run)
+    t.start()
     return make_response("run",200)
 
 @app.route("/kill-bot", methods=["POST"])
