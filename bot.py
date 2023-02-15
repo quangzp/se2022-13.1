@@ -1,4 +1,5 @@
 import websocket, json, pprint, talib, numpy, asyncio
+from binance.spot import Spot as Client
 # websocket.enableTrace(True)
 BASE_URL = 'https://testnet.binance.vision'
 RSI_PERIOD = 14
@@ -11,13 +12,14 @@ ORDER_TYPE_MARKET = 'MARKET'
 SOCKET = f"wss://stream.binance.com:9443/ws/"
 
 class TradeBot:
-    def __init__(self, client, symbol):
+    def __init__(self, client, symbol, quantity):
         self.canceled = False
         self.closes = []
         self.in_position = False
         self.client = client
         self.symbol = symbol
-        self.socket = f"{SOCKET}{symbol.lower()}@kline_1m"
+        self.quantity = quantity
+        self.socket = f"{SOCKET}{symbol.lower()}@kline_1s"
         self.ws = websocket.WebSocketApp(self.socket, on_open=self.on_open, on_close=self.on_close, on_message=self.on_message)
         
     def run(self):
@@ -30,14 +32,16 @@ class TradeBot:
         self.ws.close()
         
     
-    def order(client, symbol, side, quantity, order_type = ORDER_TYPE_MARKET):
+    def order(self, side):
         try:
-            order = client.new_order(symbol=symbol, side=side, type=order_type, quantity=quantity)
+            order = self.client.new_order( symbol = self.symbol, 
+                                          side = side, 
+                                          type = ORDER_TYPE_MARKET, 
+                                          quantity=self.quantity)
             print(order)
         except Exception as e:
             print("an exception occured - {}".format(e))
             return False
-
         return True
     
     def on_open(self, ws):
@@ -73,8 +77,8 @@ class TradeBot:
 
                 if last_rsi > RSI_OVERBOUGHT:
                     if self.in_position:
-                        print("Overbought! Sell!")
-                        order_succeeded = self.order(self.client, self.symbol, SIDE_SELL, TRADE_QUANTITY)
+                        print(f"Overbought! {SIDE_SELL}!")
+                        order_succeeded = self.order(SIDE_SELL)
                         if order_succeeded:
                             self.in_position = False
                     else:
@@ -84,17 +88,19 @@ class TradeBot:
                     if self.in_position:
                         print("It is oversold, nothing to do.")
                     else:
-                        print("Oversold! Buy!")
-                        order_succeeded = self.order(self.client, self.symbol ,SIDE_BUY, TRADE_QUANTITY)
+                        print(f"Oversold! {SIDE_BUY}!")
+                        order_succeeded = self.order(SIDE_BUY)
                         if order_succeeded:
                             self.in_position = True
-                
-# client = Client(base_url = BASE_URL, key = config.API_KEY, secret = config.API_SECRET)           
-# c = TradeBot(client, 'BNBUSDT')
+        print(self.client.account())
+# API_KEY = 'J9voeoPodq52IYt1yrEmPH61RX5tc2jaleRVV6JHTiYZ0mHNe6Nxks6K5DhgtNUr'
+# API_SECRET = '1gH7FNY4NV3Gcb1RQh53nken60JnHeSCZLfhlwWHHKYRXQOuHp0otgj9VSWFl0rY' 
+# client = Client(base_url = BASE_URL, api_key = API_KEY, api_secret = API_SECRET)           
+# c = TradeBot(client, 'ETHUSDT', 1)
 
 # async def main():
 #     task = asyncio.create_task(c.run())
-#     c.canceled = True
+#     # c.canceled = True
 #     await task
 
 # asyncio.run(main())

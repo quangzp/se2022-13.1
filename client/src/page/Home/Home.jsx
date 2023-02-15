@@ -120,23 +120,24 @@ const Home = () => {
         }
     }
 
-    const handleGetBalances = async (uuid) => {
-        const balances = await getBalance({ uuid: uuid })
-        setBtcBalance(balances[1].free);
-        setEthBalance(balances[2].free);
-        setBnbBalance(balances[0].free);
-    }
-
     const stopBotHandle = async (uuid) => {
         const data = await stopBot({ uuid: uuid })
         if (data === 200) {
             setBtcBot(false);
             setBnbBot(false);
             setEthBot(false);
-            toast.success("Bot is stop!")
+            toast.success("Bot is stoped!")
         } else {
             toast.error("Error!")
         }
+    }
+
+    const handleGetBalances = async (uuid) => {
+        const balances = await getBalance({ uuid: uuid })
+        setBtcBalance(balances[1].free);
+        setEthBalance(balances[2].free);
+        setBnbBalance(balances[0].free);
+        toast.success("Succesfully get balances!")
     }
 
     return (

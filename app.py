@@ -117,7 +117,7 @@ def start_bot():
     if custom_client is None:
         return make_response("unauthen",401)
     
-    b = bot.TradeBot(custom_client.my_client, data['symbol'])
+    b = bot.TradeBot(custom_client.my_client, data['symbol'], data['quantity'])
     bots[data['uuid']] = b
     t = threading.Thread(target=b.run)
     t.start()
