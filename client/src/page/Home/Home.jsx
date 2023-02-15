@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import './index.css'
-import { buy, login, sell, startBot } from './Service/BinanceService';
+import { buy, login, sell, startBot, stopBot } from './Service/BinanceService';
 
 const Home = () => {
-
+    const [btcBot, setBtcBot] = useState(false);
+    const [ethBot, setEthBot] = useState(false);
+    const [bnbBot, setBnbBot] = useState(false);
 
     const [btcQuantity, setBtcQuantity] = useState();
     const [ethQuantity, setEthQuantity] = useState();
@@ -80,11 +82,33 @@ const Home = () => {
             const number = Number(quantity)
             console.log(uuid)
             const data = await startBot({ uuid: uuid, symbol: coin, quantity: number })
-            if(data === 200) {
+            if (data === 200) {
+                if(coin === "BTCUSDT") {
+                    setBtcBot(true)
+                }
+                if(coin === "BNBUDSDT") {
+                    setBnbBot(true)
+                }
+                if(coin === "ETHUSDT") {
+                    setEthBot(true)
+                }
                 toast.success("Bot is started!")
+                
             } else {
                 toast.error("Error!")
             }
+        }
+    }
+
+    const stopBotHandle = async (uuid) => {
+        const data = await stopBot({ uuid: uuid })
+        if (data === 200) {
+            setBtcBot(false);
+            setBnbBot(false);
+            setEthBot(false);
+            toast.success("Bot is stop!")
+        } else {
+            toast.error("Error!")
         }
     }
 
@@ -139,7 +163,7 @@ const Home = () => {
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("BTCUSDT", btcQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("BTCUSDT", btcQuantity, uuid)}>Sell</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => runBotHandle("BTCUSDT", btcQuantity, uuid)}>Auto Invest</button>
+                                    {!btcBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BTCUSDT", btcQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
@@ -160,7 +184,7 @@ const Home = () => {
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("ETHUSDT", ethQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("ETHUSDT", ethQuantity, uuid)}>Sell</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => runBotHandle("ETHUSDT", ethQuantity, uuid)}>Auto Invest</button>
+                                    {!ethBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("ETHUSDT", ethQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
@@ -182,7 +206,7 @@ const Home = () => {
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("BNBUSDT", bnbQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("BNBUSDT", bnbQuantity, uuid)}>Sell</button>
-                                    <button class="btn btn-warning btn-action" onClick={() => runBotHandle("BNBUSDT", bnbQuantity, uuid)}>Auto Invest</button>
+                                    {!bnbBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BNBUSDT", bnbQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>

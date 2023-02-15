@@ -36,3 +36,7 @@ input::placeholder{
     width: 1200px;
     margin: auto;
 }
+
+.btn-bot {
+    width: 100px;
+}
