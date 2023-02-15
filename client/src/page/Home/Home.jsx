@@ -83,13 +83,13 @@ const Home = () => {
             console.log(uuid)
             const data = await startBot({ uuid: uuid, symbol: coin, quantity: number })
             if (data === 200) {
-                if(coin === "BTCUSDT") {
+                if(coin === 'BTCUSDT') {
                     setBtcBot(true)
                 }
-                if(coin === "BNBUDSDT") {
+                if(coin === 'BNBUSDT') {
                     setBnbBot(true)
                 }
-                if(coin === "ETHUSDT") {
+                if(coin === 'ETHUSDT') {
                     setEthBot(true)
                 }
                 toast.success("Bot is started!")
@@ -163,7 +163,7 @@ const Home = () => {
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("BTCUSDT", btcQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("BTCUSDT", btcQuantity, uuid)}>Sell</button>
-                                    {!btcBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BTCUSDT", btcQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
+                                    {!btcBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BTCUSDT", btcQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
@@ -184,7 +184,7 @@ const Home = () => {
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("ETHUSDT", ethQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("ETHUSDT", ethQuantity, uuid)}>Sell</button>
-                                    {!ethBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("ETHUSDT", ethQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
+                                    {!ethBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("ETHUSDT", ethQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
@@ -206,7 +206,7 @@ const Home = () => {
                                 <div className='action-col'>
                                     <button class="btn btn-warning btn-action" onClick={() => buyHandle("BNBUSDT", bnbQuantity, uuid)}>Buy</button>
                                     <button class="btn btn-warning btn-action" onClick={() => sellHandle("BNBUSDT", bnbQuantity, uuid)}>Sell</button>
-                                    {!bnbBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BNBUSDT", bnbQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
+                                    {!bnbBot ? <button class="btn btn-warning btn-action btn-bot" onClick={() => runBotHandle("BNBUSDT", bnbQuantity, uuid)}>Run Bot</button> :<button class="btn btn-danger btn-action btn-bot" onClick={() => stopBotHandle(uuid)}>Stop Bot</button>}
                                 </div>
                             </td>
                             <td>
