@@ -6,6 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+    integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+    crossorigin="anonymous"></script>
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 
@@ -51,15 +57,19 @@
       <input type="number" id="rsi_over_sold" name="rsi_over_sold" placeholder="30" />
     </div>
   </div>
-  <script src="{{url_for('static', filename='chart.js')}}"></script>
   <script type="text/javascript">
+    var key = 'ad2ed1a2-a333-4780-ab65-8cc430a4b947'
+    var socket = io("http://127.0.0.1:5000");
+    var uuid = "1";
+    socket.emit("join", uuid)
+    socket.on("update_profit", function (msg) {
+      console.log(msg);
+    });
+    //socket.on("re_connect", function (msg) {
+     // console.log("reconnect");
+      //socketIO.emit("connect", msg)
+    //});
 
-    var free = document.getElementById("free");
-    var my_balances = JSON.parse('{{ balances | tojson }}');
-    document.getElementById("balance_coins").onchange = function () {
-      var coinIdx = this.options[this.selectedIndex].value;
-      free.style.display = my_balances[coinIdx]['free'];
-    }
   </script>
 </body>
 

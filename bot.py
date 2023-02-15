@@ -1,12 +1,13 @@
 import websocket, json, pprint, talib, numpy, asyncio
-from binance.spot import Spot as Client
-from binance.enums import *
 # websocket.enableTrace(True)
 BASE_URL = 'https://testnet.binance.vision'
 RSI_PERIOD = 14
 RSI_OVERBOUGHT = 70
 RSI_OVERSOLD = 30
 TRADE_QUANTITY = 0.05
+SIDE_BUY = 'BUY'
+SIDE_SELL = 'SELL'
+ORDER_TYPE_MARKET = 'MARKET'
 SOCKET = f"wss://stream.binance.com:9443/ws/"
 
 class TradeBot:
